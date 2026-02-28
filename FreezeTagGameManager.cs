@@ -1,8 +1,6 @@
 public static class FreezeTagGameManager
 {
     public static bool GracePeriodActive = true;
-    public static float GraceDuration = 12f; // configurable 10–15 sec
-
     public static PlayerControl Hunter;
 
     public static void Initialize()
@@ -12,6 +10,7 @@ public static class FreezeTagGameManager
 
     private static void OnGameStart()
     {
+        TaskDisableSystem.ModifyGameOptions();
         AssignRoles();
         GracePeriodSystem.StartGracePeriod();
     }
@@ -37,12 +36,7 @@ public static class FreezeTagGameManager
 
         if (runners.All(p => FreezeSystem.IsFrozen(p)))
         {
-            EndGame(Hunter);
+            WinConditionSystem.HunterWin();
         }
-    }
-
-    private static void EndGame(PlayerControl winner)
-    {
-        // Custom win trigger
     }
 }
