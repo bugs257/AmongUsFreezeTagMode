@@ -1,42 +1,42 @@
-public static class FreezeTagGameManager
+using System.Linq;
+using UnityEngine;
+
+namespace AmongUsFreezeTagMode
 {
-    public static bool GracePeriodActive = true;
-    public static PlayerControl Hunter;
-
-    public static void Initialize()
+    public static class FreezeTagGameManager
     {
-        MiraEvents.OnGameStart += OnGameStart;
-    }
+        public static PlayerControl Hunter;
 
-    private static void OnGameStart()
-    {
-        TaskDisableSystem.ModifyGameOptions();
-        AssignRoles();
-        GracePeriodSystem.StartGracePeriod();
-    }
-
-    private static void AssignRoles()
-    {
-        var players = PlayerControl.AllPlayerControls.ToList();
-        Hunter = players[UnityEngine.Random.Range(0, players.Count)];
-
-        foreach (var player in players)
+        public static void Initialize()
         {
-            if (player == Hunter)
-                player.SetRole(new HunterRole(player.Pointer));
-            else
-                player.SetRole(new RunnerRole(player.Pointer));
+            MiraAPI.Events.MiraEvents.OnGameStart += OnGameStart;
         }
-    }
 
-    public static void CheckWinCondition()
-    {
-        var runners = PlayerControl.AllPlayerControls
-            .Where(p => p != Hunter);
-
-        if (runners.All(p => FreezeSystem.IsFrozen(p)))
+        private static void OnGameStart()
         {
-            WinConditionSystem.HunterWin();
+            AssignRoles();
+            Systems.GracePeriodSystem.StartGracePeriod();
+        }
+
+        private static void AssignRoles()
+        {
+            var players = PlayerControl.AllPlayerControls.ToList();
+            Hunter = players[Random.Range(0, players.Count)];
+
+            foreach (var player in players)
+            {
+                if (player == Hunter)
+                    player.AddRole(new Roles.HunterRole());
+                else
+                    player.AddRole(new Roles.RunnerRole());
+            }
+        }
+
+        public static bool AllRunnersFrozen()
+        {
+            return PlayerControl.AllPlayerControls
+                .Where(p => p != Hunter)
+                .All(p => Systems.FreezeSystem.IsFrozen(p));
         }
     }
 }
