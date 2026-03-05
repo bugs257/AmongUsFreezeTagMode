@@ -1,7 +1,11 @@
-public sealed class HunterRole : ImpostorRole
-{
-    public HunterRole(IntPtr ptr) : base(ptr) { }
+using UnityEngine;
+using MiraAPI.Roles;
 
-    public override string Name => "Hunter";
-    public override Color RoleColor => new(1f, 0f, 0f);
+namespace AmongUsFreezeTagMode.Roles
+{
+    public class HunterRole : BaseRole
+    {
+        public override string Name => "Hunter";
+        public override Color Color => Color.red;
+    }
 }
