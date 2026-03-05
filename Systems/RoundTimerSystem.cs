@@ -1,43 +1,50 @@
-public static class RoundTimerSystem
+using System.Collections;
+using UnityEngine;
+using MiraAPI.Utilities;
+
+namespace AmongUsFreezeTagMode.Systems
 {
-    public static float RoundDuration = 120f;
-    public static float RemainingTime;
-    public static bool IsRunning;
-
-    public static void StartTimer()
+    public static class RoundTimerSystem
     {
-        RemainingTime = RoundDuration;
-        IsRunning = true;
-        CoroutineRunner.Start(TimerRoutine());
-    }
+        public static float RoundDuration = 120f;
+        public static float TimeLeft;
 
-    private static IEnumerator TimerRoutine()
-    {
-        while (RemainingTime > 0 && IsRunning)
+        public static void StartTimer()
         {
-            yield return new WaitForSeconds(1f);
-            RemainingTime--;
-            UpdateHud();
+            TimeLeft = RoundDuration;
+            CoroutineRunner.Start(TimerLoop());
         }
 
-        if (RemainingTime <= 0)
-            WinConditionSystem.CrewmateWin();
-    }
+        private static IEnumerator TimerLoop()
+        {
+            while (TimeLeft > 0)
+            {
+                yield return new WaitForSeconds(1f);
+                TimeLeft--;
+                UpdateHUD();
+            }
 
-    public static void ReduceTimeFromTask()
-    {
-        RemainingTime -= 7f; // task penalty
+            WinConditionSystem.RunnersWin();
+        }
 
-        if (RemainingTime < 0)
-            RemainingTime = 0;
+        public static void ReduceTimeFromTask(float amount)
+        {
+            TimeLeft -= amount;
 
-        UpdateHud();
-    }
+            if (TimeLeft < 0)
+                TimeLeft = 0;
 
-    private static void UpdateHud()
-    {
-        HudManager.Instance.TaskPanel.SetTaskText(
-            $"Freeze Tag\nTime Left: {Mathf.Ceil(RemainingTime)}s"
-        );
+            UpdateHUD();
+        }
+
+        private static void UpdateHUD()
+        {
+            if (HudManager.Instance?.TaskPanel != null)
+            {
+                HudManager.Instance.TaskPanel.SetTaskText(
+                    $"Freeze Tag\nTime Left: {Mathf.Ceil(TimeLeft)}s"
+                );
+            }
+        }
     }
 }
