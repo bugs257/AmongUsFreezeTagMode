@@ -1,17 +1,19 @@
-public static class WinConditionSystem
+using UnityEngine;
+
+namespace AmongUsFreezeTagMode.Systems
 {
-    public static void CrewmateWin()
+    public static class WinConditionSystem
     {
-        EndGame(GameOverReason.CrewmatesByTask);
-    }
+        public static void HunterWin()
+        {
+            AmongUsClient.Instance.RpcEndGame(
+                GameOverReason.ImpostorByKill, false);
+        }
 
-    public static void HunterWin()
-    {
-        EndGame(GameOverReason.ImpostorByKill);
-    }
-
-    private static void EndGame(GameOverReason reason)
-    {
-        AmongUsClient.Instance.RpcEndGame(reason, false);
+        public static void RunnersWin()
+        {
+            AmongUsClient.Instance.RpcEndGame(
+                GameOverReason.CrewmatesByTask, false);
+        }
     }
 }
