@@ -1,5 +1,6 @@
 using System.Linq;
 using UnityEngine;
+using MiraAPI.Events;
 
 namespace AmongUsFreezeTagMode
 {
@@ -9,11 +10,12 @@ namespace AmongUsFreezeTagMode
 
         public static void Initialize()
         {
-            MiraAPI.Events.MiraEvents.OnGameStart += OnGameStart;
+            MiraEvents.OnGameStart += OnGameStart;
         }
 
         private static void OnGameStart()
         {
+            Systems.TaskHookSystem.EnableTaskHooks();
             AssignRoles();
             Systems.GracePeriodSystem.StartGracePeriod();
         }
@@ -21,6 +23,9 @@ namespace AmongUsFreezeTagMode
         private static void AssignRoles()
         {
             var players = PlayerControl.AllPlayerControls.ToList();
+
+            if (players.Count == 0) return;
+
             Hunter = players[Random.Range(0, players.Count)];
 
             foreach (var player in players)
