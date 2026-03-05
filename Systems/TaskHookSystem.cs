@@ -1,3 +1,5 @@
+using AmongUsFreezeTagMode.Patches;
+
 namespace AmongUsFreezeTagMode.Systems
 {
     public static class TaskHookSystem
